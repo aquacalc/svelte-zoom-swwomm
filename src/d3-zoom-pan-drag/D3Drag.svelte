@@ -93,11 +93,21 @@
 <svg id="viz2" width="300" height="300">
   <g class="bg">
     <rect width="100%" height="100%" fill="#efc" />
+<!-- This circle can be dragged, but not zoomed or panned -->
+    <circle id="plain-circle" cx="130" cy="80" r="5" fill="rebeccapurple" />
     <g class="zoomed">
+      <!-- In here, this circle can be zoomed, panned, && dragged -->
       <g class="canvas" transform="translate(0, 0)">
         <circle id="target-circle" cx="170" cy="100" r="10" fill="red" />
-        <circle id="target-circle-2" cx="230" cy="100" r="20" fill="blue" />
-        <line x1='100' y1='60' x2='200' y2='260' stroke-width='2' stroke='rebeccapurple' />
+        <!-- <circle id="target-circle-2" cx="230" cy="100" r="20" fill="blue" /> -->
+        <line
+          x1="100"
+          y1="60"
+          x2="200"
+          y2="260"
+          stroke-width="2"
+          stroke="rebeccapurple"
+        />
         <!-- <circle
           id="circle-one"
           cx={newScaleX ? newScaleX(0) : xScale(0)}

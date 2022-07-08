@@ -22,6 +22,10 @@
   let newScaleX;
   let newScaleY;
 
+  // target Icon's <g> dimensions
+  let targetWidth;
+  let targetHeight;
+
   // Add X axis
   $: xScale = scaleLinear().domain([0, 4]).range([0, 300]);
 
@@ -59,23 +63,15 @@
   // };
 
   function initDrag() {
-    // select("svg").select("#target-circle").call(myDrag);
-
-    // console.log(`In initDrag: `, select("svg").selectAll("circle"));
     // console.log(
     //   `In initDrag: `,
     //   select("svg").select(".bg .zoomed .canvas #target-circle")
     // );
-    console.log(`In initDrag: `, select("#wq-target-group"));
+    // console.log(`In initDrag: `, select("#wq-target-group"));
 
-    // see: https://stackoverflow.com/questions/21990857/d3-js-how-to-get-the-computed-width-and-height-for-an-arbitrary-element
-    console.log(`In initDrag: `, select("#wq-target-group").node().getBBox());
-    // console.log(`In initDrag: `, select("#wq-target-group").getBoundingClientRect().width);
-    // console.log(`In initDrag: `, select("#wq-target-group Icon"));
-    // console.log(`In initDrag: `, select("svg").selectAll(".bg .zoomed .canvas Icon"));
-    // console.log(`In initDrag: `, select("svg").selectAll("line"));
+    // // see: https://stackoverflow.com/questions/21990857/d3-js-how-to-get-the-computed-width-and-height-for-an-arbitrary-element
+    // console.log(`In initDrag: `, select("#wq-target-group").node().getBBox());
 
-    // select("svg").selectAll("circle").attr("cursor", "grabbing").call(myDrag);
     select("svg")
       .selectAll("#wq-target-group")
       .attr("fill", "green")
@@ -106,7 +102,7 @@
 
   function dragended(e) {
     select("svg")
-      .selectAll(".fa-icon")
+      .selectAll("#wq-target-group")
       .attr("fill", "green")
       .attr("cursor", "grab");
   }
@@ -127,15 +123,36 @@
   // see: https://stackoverflow.com/questions/47816033/how-can-i-drag-group-g-element-in-d3-js
 
   function update() {
+    // see: https://stackoverflow.com/questions/21990857/d3-js-how-to-get-the-computed-width-and-height-for-an-arbitrary-element
+    console.log(`In initDrag: `, select("#wq-target-group").node().getBBox());
+
+    let targetGsDimensions = select("#wq-target-group").node().getBBox();
+    targetWidth = targetGsDimensions.width;
+    targetHeight = targetGsDimensions.Height;
+
+    console.log(`targetWidth: ${targetWidth} (${typeof targetWidth})`);
+    
     select("svg")
       .select("#wq-target-group")
       .data(data)
       .join("wq-target-group")
       .attr("transform", (d) => `translate(${d.x}, ${d.y})`)
-      .attr("r", 8)
-      .attr("fill", "rebeccapurple")
+      .attr("fill", "red")
+      // .attr("fill", "rebeccapurple")
       .attr("opacity", "0.65")
       .attr("cursor", "grabbing");
+
+    select("svg")
+      .select("#target-line")
+      .data(data)
+      .join("target-line")
+      .attr("x1", "150")
+      .attr("y1", "120")
+      .attr("x2", (d) => d.x + 18.285715103149414 / 2)
+      .attr("y2", (d) => d.y + 27.428569793701172)
+      .attr("fill", "red")
+      .attr("opacity", "0.65");
+    // .attr("cursor", "grabbing");
   }
 </script>
 
@@ -149,6 +166,7 @@
       <!-- In here, this circle can be zoomed, panned, && dragged -->
       <g class="canvas" transform="translate(0, 0)">
         <line
+          id="target-line"
           x1="100"
           y1="60"
           x2="200"
@@ -156,15 +174,6 @@
           stroke-width="2"
           stroke="rebeccapurple"
         />
-
-        <!-- <line
-          x1="160"
-          y1="200"
-          x2="150"
-          y2="120"
-          stroke-width="2"
-          stroke="green"
-        /> -->
 
         <!-- <text id="init-wp" x="130" y="80" fill="rebeccapurple">
           {"\uf3c5"}</text
@@ -179,12 +188,16 @@
         </g>
 
         <g id="wq-target-group" transform={`translate(${100}, ${100})`}>
-          <Icon
-            id="wp-target"
-            data={mapMarker}
-            scale="2"
-          />
+          <Icon id="wp-target" data={mapMarker} scale="2" />
         </g>
+
+        <text x="150" y="200">
+          {27.428569793701172} & {targetHeight}
+        </text>
+
+        <text x="50" y="100">
+          Evo! {targetHeight}
+        </text>
       </g>
     </g>
   </g>

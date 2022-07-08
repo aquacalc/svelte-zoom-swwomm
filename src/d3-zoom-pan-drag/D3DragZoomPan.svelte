@@ -142,15 +142,30 @@
 
     // console.log(`targetWidth: ${targetWidth} (${typeof targetWidth})`);
 
+    console.log(`0. update: `, data[0].x);
+
     select("svg")
       .select("#wq-target-group")
       .data(data)
       .join("wq-target-group")
       .attr("transform", (d) => `translate(${d.x}, ${d.y})`)
       .attr("fill", "red")
-      // .attr("fill", "rebeccapurple")
-      .attr("opacity", "0.75")
+      // .style("fill", d => {d.x >= 180 ? 'red' : 'blue'})
+      // .attr("opacity", "0.75")
       .attr("cursor", "grabbing");
+
+    // [NB] Need this to syle Svelte Awesome icon(s)
+    const myTarget = select("#wq-target-group .fa-icon").attr("opacity", "0.9");
+    if (data[0].x >= 230 || data[0].x <= 60) {
+      console.log(`1-A. update: `, data[0].x);
+      myTarget.style("fill", "red");
+    } else {
+      console.log(`1-B. update: `, data[0].x);
+      myTarget.style("fill", "olive");
+    }
+
+    const myTargetCircle = select("#wq-target-group-circle .fa-icon");
+    myTargetCircle.style("fill", "red");
 
     select("svg")
       .select("#target-line")
@@ -159,13 +174,15 @@
       .attr("x1", (d) => 150 + d.widthInit / 2)
       .attr("y1", (d) => 120 + d.heightInit)
       .attr("x2", (d) => d.x + d.widthTarget / 2)
-      .attr("y2", (d) => d.y + d.heightTarget)
-      // .attr("x2", (d) => d.x + 18.285715103149414 / 2)
-      // .attr("y2", (d) => d.y + 27.428569793701172)
-      .attr("fill", "red")
-      .attr("opacity", "0.65");
+      .attr("y2", (d) => d.y + d.heightTarget + 4); // "+ 4" to tip of target icon
+    // .attr("x2", (d) => d.x + 18.285715103149414 / 2)
+    // .attr("y2", (d) => d.y + 27.428569793701172)
+    // .attr("fill", "red")
+    // .attr("opacity", "0.65");
     // .attr("cursor", "grabbing");
   }
+
+  $: isTargetSafe = false;
 </script>
 
 <h3>
@@ -185,8 +202,8 @@
           y1="60"
           x2="200"
           y2="260"
-          stroke-width="2"
-          stroke="rebeccapurple"
+          stroke-width="1.5"
+          stroke="#202020"
           stroke-linecap="round"
         />
 
@@ -196,7 +213,7 @@
             <Icon data={circle} scale="1.6" style="fill:skyblue" />
           </g>
         </g> -->
-        
+
         <!-- <text id="init-wp" x="130" y="80" fill="rebeccapurple">
           {"\uf3c5"}</text
         > -->
@@ -210,20 +227,19 @@
         </g>
 
         <g id="wq-target-group" transform={`translate(${100}, ${100})`}>
-          <!-- <Icon data={mapMarker} scale="2" /> -->
           <Icon data={mapMarker} scale="4" />
-          <g transform={`translate(${7.5}, ${8.5})`}>
-            <Icon data={circle} scale="1.6" style="fill:skyblue" />
+          <g
+            id="wq-target-group-circle"
+            transform={`translate(${7.5}, ${8.5})`}
+          >
+            <Icon data={circle} scale="1.6" />
+            <!-- <Icon
+              data={circle}
+              scale="1.6"
+              style="fill:{isTargetSafe ? 'green' : 'red'}"
+            /> -->
           </g>
         </g>
-
-        <!-- <text x="150" y="200">
-          {27.428569793701172} & {targetHeight}
-        </text>
-
-        <text x="50" y="100">
-          Evo! {targetHeight}
-        </text> -->
       </g>
     </g>
   </g>

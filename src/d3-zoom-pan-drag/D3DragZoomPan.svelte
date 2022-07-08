@@ -9,6 +9,7 @@
   import Icon from "svelte-awesome";
   import mapMarker from "svelte-awesome/icons/mapMarker";
   import mapPin from "svelte-awesome/icons/mapPin";
+  // import crosshairs from 'svelte-awesome/icons/crosshairs';
 
   let data = [],
     width = 600,
@@ -108,6 +109,7 @@
   }
 
   function updateData() {
+    console.log(`UPDATE DATA`)
     data = [];
     for (let idx = 0; idx < numPoints; idx++) {
       data.push({
@@ -115,6 +117,13 @@
         x: 160 - 50 * idx,
         y: 200,
         fill: idx % 2 === 0 ? "green" : "red",
+        heightInit: select("#wq-init-group").node().getBBox().height,
+        widthInit: select("#wq-init-group").node().getBBox().width,
+        heightTarget: select("#wq-target-group").node().getBBox().height,
+        widthTarget: select("#wq-target-group").node().getBBox().width,
+
+        // height: 27.428569793701172,
+        // width: 18.285715103149414
       });
     }
   }
@@ -123,14 +132,14 @@
   // see: https://stackoverflow.com/questions/47816033/how-can-i-drag-group-g-element-in-d3-js
 
   function update() {
-    // see: https://stackoverflow.com/questions/21990857/d3-js-how-to-get-the-computed-width-and-height-for-an-arbitrary-element
-    console.log(`In initDrag: `, select("#wq-target-group").node().getBBox());
+    // // see: https://stackoverflow.com/questions/21990857/d3-js-how-to-get-the-computed-width-and-height-for-an-arbitrary-element
+    // console.log(`In initDrag: `, select("#wq-target-group").node().getBBox());
 
     let targetGsDimensions = select("#wq-target-group").node().getBBox();
     targetWidth = targetGsDimensions.width;
     targetHeight = targetGsDimensions.Height;
 
-    console.log(`targetWidth: ${targetWidth} (${typeof targetWidth})`);
+    // console.log(`targetWidth: ${targetWidth} (${typeof targetWidth})`);
     
     select("svg")
       .select("#wq-target-group")
@@ -146,10 +155,12 @@
       .select("#target-line")
       .data(data)
       .join("target-line")
-      .attr("x1", "150")
-      .attr("y1", "120")
-      .attr("x2", (d) => d.x + 18.285715103149414 / 2)
-      .attr("y2", (d) => d.y + 27.428569793701172)
+      .attr("x1", d => 150 + d.widthInit / 2)
+      .attr("y1", d => 120 + d.heightInit)
+      .attr("x2", (d) => d.x + d.widthTarget / 2)
+      .attr("y2", (d) => d.y + d.heightTarget)
+      // .attr("x2", (d) => d.x + 18.285715103149414 / 2)
+      // .attr("y2", (d) => d.y + 27.428569793701172)
       .attr("fill", "red")
       .attr("opacity", "0.65");
     // .attr("cursor", "grabbing");
@@ -173,6 +184,7 @@
           y2="260"
           stroke-width="2"
           stroke="rebeccapurple"
+          stroke-linecap=round
         />
 
         <!-- <text id="init-wp" x="130" y="80" fill="rebeccapurple">
@@ -183,21 +195,21 @@
         <circle id="target-circle" cx="170" cy="100" r="5" fill="red" />
 
         <!-- <Icon data={mapMarker} scale='3' style='fill: rgb(21, 85, 146);'/> -->
-        <g transform={`translate(${150}, ${120})`}>
+        <g id="wq-init-group" transform={`translate(${150}, ${120})`}>
           <Icon data={mapPin} scale="1" style="fill: rgb(21, 85, 146);" />
         </g>
 
         <g id="wq-target-group" transform={`translate(${100}, ${100})`}>
-          <Icon id="wp-target" data={mapMarker} scale="2" />
+          <Icon data={mapMarker} scale="2" />
         </g>
 
-        <text x="150" y="200">
+        <!-- <text x="150" y="200">
           {27.428569793701172} & {targetHeight}
         </text>
 
         <text x="50" y="100">
           Evo! {targetHeight}
-        </text>
+        </text> -->
       </g>
     </g>
   </g>

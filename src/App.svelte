@@ -1,11 +1,11 @@
 <script>
   // Zoom & pan only
-  import D3ZoomPan from "./d3-zoom-pan-drag/D3ZoomPan.svelte";
+  // import D3ZoomPan from "./d3-zoom-pan-drag/D3ZoomPan.svelte";
 
-  // Drag for target circle plus (geometric) zoom and pan
-  import D3Drag from "./d3-zoom-pan-drag/D3Drag.svelte";
+  // Drag target circle plus (geometric) zoom and pan
+  // import D3Drag from "./d3-zoom-pan-drag/D3Drag.svelte";
 
-  //
+  // Drag target WP (only) plus zoom (semantic) & pan entire chart content
   import D3DragZoomPan from "./d3-zoom-pan-drag/D3DragZoomPan.svelte";
 </script>
 
@@ -26,7 +26,11 @@
   </section>
 
   <section>
-    <D3Drag />
+    <!-- <D3Drag /> -->
+  </section>
+
+  <section>
+    <D3DragZoomPan />
   </section>
 </main>
 

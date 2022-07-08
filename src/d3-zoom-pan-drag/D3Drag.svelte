@@ -71,7 +71,8 @@
 
     // select("svg").selectAll("circle").attr("cursor", "grabbing").call(myDrag);
     select("svg")
-      .selectAll("#target-circle").attr('fill', 'green')
+      .selectAll("#target-circle")
+      .attr("fill", "green")
       .attr("cursor", "grab")
       .call(myDrag);
   }
@@ -94,7 +95,10 @@
   }
 
   function dragended(e) {
-    select("svg").selectAll("#target-circle").attr('fill', 'green').attr("cursor", "grab");
+    select("svg")
+      .selectAll("#target-circle")
+      .attr("fill", "green")
+      .attr("cursor", "grab");
   }
 
   function updateData() {
@@ -165,6 +169,15 @@
         <!-- <Icon data={mapMarker} scale='3' style='fill: rgb(21, 85, 146);'/> -->
         <g transform={`translate(${150}, ${120})`}>
           <Icon data={mapPin} scale="1" style="fill: rgb(21, 85, 146);" />
+        </g>
+
+        <g transform={`translate(${100}, ${100})`}>
+          <Icon
+            id="wp-target"
+            data={mapMarker}
+            scale="2"
+            style="fill: olivegreen"
+          />
         </g>
 
         <!-- <circle id="target-circle-2" cx="230" cy="100" r="20" fill="blue" /> -->

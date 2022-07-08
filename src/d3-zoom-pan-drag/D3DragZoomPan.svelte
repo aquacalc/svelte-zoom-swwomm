@@ -53,10 +53,10 @@
     newScaleY = transform.rescaleY(yScale);
   };
 
-  const myEndHandler = () => {
-    console.log(`END HANDLER`);
-    select("svg").selectAll("#target-circle").attr("cursor", "pointer");
-  };
+  // const myEndHandler = () => {
+  //   console.log(`END HANDLER`);
+  //   select("svg").selectAll("#target-circle").attr("cursor", "pointer");
+  // };
 
   function initDrag() {
     // select("svg").select("#target-circle").call(myDrag);
@@ -66,12 +66,19 @@
     //   `In initDrag: `,
     //   select("svg").select(".bg .zoomed .canvas #target-circle")
     // );
-    console.log(`In initDrag: `, select("svg").select("#target-circle"));
+    console.log(`In initDrag: `, select("#wq-target-group"));
+
+    // see: https://stackoverflow.com/questions/21990857/d3-js-how-to-get-the-computed-width-and-height-for-an-arbitrary-element
+    console.log(`In initDrag: `, select("#wq-target-group").node().getBBox());
+    // console.log(`In initDrag: `, select("#wq-target-group").getBoundingClientRect().width);
+    // console.log(`In initDrag: `, select("#wq-target-group Icon"));
+    // console.log(`In initDrag: `, select("svg").selectAll(".bg .zoomed .canvas Icon"));
     // console.log(`In initDrag: `, select("svg").selectAll("line"));
 
     // select("svg").selectAll("circle").attr("cursor", "grabbing").call(myDrag);
     select("svg")
-      .selectAll("#target-circle").attr('fill', 'green')
+      .selectAll("#wq-target-group")
+      .attr("fill", "green")
       .attr("cursor", "grab")
       .call(myDrag);
   }
@@ -82,7 +89,11 @@
     .on("end", dragended);
 
   function dragstarted(e) {
-    select("svg").selectAll("#target-circle").attr("cursor", "grabbing");
+    // console.log(`In dragstarted...`);
+    select("svg")
+      .selectAll("#wq-target-group")
+      .attr("cursor", "grabbing")
+      .attr("fill", "red");
   }
 
   function dragged(e) {
@@ -94,12 +105,13 @@
   }
 
   function dragended(e) {
-    select("svg").selectAll("#target-circle").attr('fill', 'green').attr("cursor", "grab");
+    select("svg")
+      .selectAll(".fa-icon")
+      .attr("fill", "green")
+      .attr("cursor", "grab");
   }
 
   function updateData() {
-    // console.log(`UPDATE-DATA..."`);
-
     data = [];
     for (let idx = 0; idx < numPoints; idx++) {
       data.push({
@@ -109,26 +121,25 @@
         fill: idx % 2 === 0 ? "green" : "red",
       });
     }
-    // console.log(`DATA: `, data);
   }
+
+  // got it myself, but the following is confirmation...
+  // see: https://stackoverflow.com/questions/47816033/how-can-i-drag-group-g-element-in-d3-js
 
   function update() {
     select("svg")
-      .select("#target-circle")
-      // .selectAll("circle")
+      .select("#wq-target-group")
       .data(data)
-      .join("target-circle")
-      // .join("circle")
-      .attr("cx", (d) => d.x)
-      .attr("cy", (d) => d.y)
+      .join("wq-target-group")
+      .attr("transform", (d) => `translate(${d.x}, ${d.y})`)
       .attr("r", 8)
       .attr("fill", "rebeccapurple")
-      // .attr("fill", (d) => d.fill)
-      .attr("opacity", "0.55")
+      .attr("opacity", "0.65")
       .attr("cursor", "grabbing");
   }
 </script>
 
+<h3>Drag target WP (only) plus (semantically) zoom & pan all elements</h3>
 <svg id="viz2" width="300" height="300">
   <g class="bg">
     <rect width="100%" height="100%" fill="#efc" />
@@ -146,18 +157,18 @@
           stroke="rebeccapurple"
         />
 
-        <line
+        <!-- <line
           x1="160"
           y1="200"
           x2="150"
           y2="120"
           stroke-width="2"
           stroke="green"
-        />
+        /> -->
 
-        <text id="init-wp" x="130" y="80" fill="rebeccapurple">
+        <!-- <text id="init-wp" x="130" y="80" fill="rebeccapurple">
           {"\uf3c5"}</text
-        >
+        > -->
 
         <!-- Must have circle here or applied circle from D3 code will not zoom-and-pan -->
         <circle id="target-circle" cx="170" cy="100" r="5" fill="red" />
@@ -167,20 +178,13 @@
           <Icon data={mapPin} scale="1" style="fill: rgb(21, 85, 146);" />
         </g>
 
-        <!-- <circle id="target-circle-2" cx="230" cy="100" r="20" fill="blue" /> -->
-        <!-- <circle
-          id="circle-one"
-          cx={newScaleX ? newScaleX(0) : xScale(0)}
-          cy={newScaleY ? newScaleY(4) : yScale(4)}
-          r="18"
-          fill="#69c"
-        />
-        <circle
-          id="circle-two"
-          cx={newScaleX ? newScaleX(1) : xScale(1)}
-          cy={newScaleY ? newScaleY(4) : yScale(4)}
-          r="12"
-        /> -->
+        <g id="wq-target-group" transform={`translate(${100}, ${100})`}>
+          <Icon
+            id="wp-target"
+            data={mapMarker}
+            scale="2"
+          />
+        </g>
       </g>
     </g>
   </g>

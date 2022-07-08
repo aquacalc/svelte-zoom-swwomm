@@ -155,17 +155,18 @@
       .attr("cursor", "grabbing");
 
     // [NB] Need this to syle Svelte Awesome icon(s)
-    const myTarget = select("#wq-target-group .fa-icon").attr("opacity", "0.9");
+    const myTargetCircle = select("#wq-target-group-circle .fa-icon");
+    // myTargetCircle.style("fill", "red");
+
+    const myTarget = select("#wq-target-group .fa-icon").attr("opacity", "0.75");
     if (data[0].x >= 230 || data[0].x <= 60) {
-      console.log(`1-A. update: `, data[0].x);
-      myTarget.style("fill", "red");
+      // console.log(`1-A. update: `, data[0].x);
+      myTargetCircle.style("fill", "red");
     } else {
-      console.log(`1-B. update: `, data[0].x);
-      myTarget.style("fill", "olive");
+      // console.log(`1-B. update: `, data[0].x);
+      myTargetCircle.style("fill", "green");
     }
 
-    const myTargetCircle = select("#wq-target-group-circle .fa-icon");
-    myTargetCircle.style("fill", "red");
 
     select("svg")
       .select("#target-line")

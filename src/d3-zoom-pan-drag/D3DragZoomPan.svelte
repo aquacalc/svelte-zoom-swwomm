@@ -9,6 +9,7 @@
   import Icon from "svelte-awesome";
   import mapMarker from "svelte-awesome/icons/mapMarker";
   import mapPin from "svelte-awesome/icons/mapPin";
+  import circle from "svelte-awesome/icons/circle";
   // import crosshairs from 'svelte-awesome/icons/crosshairs';
 
   let data = [],
@@ -109,7 +110,7 @@
   }
 
   function updateData() {
-    console.log(`UPDATE DATA`)
+    console.log(`UPDATE DATA`);
     data = [];
     for (let idx = 0; idx < numPoints; idx++) {
       data.push({
@@ -140,7 +141,7 @@
     targetHeight = targetGsDimensions.Height;
 
     // console.log(`targetWidth: ${targetWidth} (${typeof targetWidth})`);
-    
+
     select("svg")
       .select("#wq-target-group")
       .data(data)
@@ -148,15 +149,15 @@
       .attr("transform", (d) => `translate(${d.x}, ${d.y})`)
       .attr("fill", "red")
       // .attr("fill", "rebeccapurple")
-      .attr("opacity", "0.65")
+      .attr("opacity", "0.75")
       .attr("cursor", "grabbing");
 
     select("svg")
       .select("#target-line")
       .data(data)
       .join("target-line")
-      .attr("x1", d => 150 + d.widthInit / 2)
-      .attr("y1", d => 120 + d.heightInit)
+      .attr("x1", (d) => 150 + d.widthInit / 2)
+      .attr("y1", (d) => 120 + d.heightInit)
       .attr("x2", (d) => d.x + d.widthTarget / 2)
       .attr("y2", (d) => d.y + d.heightTarget)
       // .attr("x2", (d) => d.x + 18.285715103149414 / 2)
@@ -167,7 +168,9 @@
   }
 </script>
 
-<h3>Drag target WP (only) plus (semantically) zoom & pan all elements</h3>
+<h3>
+  Drag target WP (only) plus <span>(semantically)</span> zoom & pan all elements
+</h3>
 <svg id="viz2" width="300" height="300">
   <g class="bg">
     <rect width="100%" height="100%" fill="#efc" />
@@ -184,15 +187,22 @@
           y2="260"
           stroke-width="2"
           stroke="rebeccapurple"
-          stroke-linecap=round
+          stroke-linecap="round"
         />
 
+        <!-- <g transform={`translate(${150}, ${120})`}>
+          <Icon data={mapMarker} scale="4" />
+          <g transform={`translate(${7.5}, ${8.5})`}>
+            <Icon data={circle} scale="1.6" style="fill:skyblue" />
+          </g>
+        </g> -->
+        
         <!-- <text id="init-wp" x="130" y="80" fill="rebeccapurple">
           {"\uf3c5"}</text
         > -->
 
         <!-- Must have circle here or applied circle from D3 code will not zoom-and-pan -->
-        <circle id="target-circle" cx="170" cy="100" r="5" fill="red" />
+        <!-- <circle id="target-circle" cx="170" cy="100" r="5" fill="red" /> -->
 
         <!-- <Icon data={mapMarker} scale='3' style='fill: rgb(21, 85, 146);'/> -->
         <g id="wq-init-group" transform={`translate(${150}, ${120})`}>
@@ -200,7 +210,11 @@
         </g>
 
         <g id="wq-target-group" transform={`translate(${100}, ${100})`}>
-          <Icon data={mapMarker} scale="2" />
+          <!-- <Icon data={mapMarker} scale="2" /> -->
+          <Icon data={mapMarker} scale="4" />
+          <g transform={`translate(${7.5}, ${8.5})`}>
+            <Icon data={circle} scale="1.6" style="fill:skyblue" />
+          </g>
         </g>
 
         <!-- <text x="150" y="200">
@@ -214,3 +228,9 @@
     </g>
   </g>
 </svg>
+
+<style>
+  span {
+    text-decoration: line-through;
+  }
+</style>

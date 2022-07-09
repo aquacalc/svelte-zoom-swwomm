@@ -12,10 +12,11 @@
   import circle from "svelte-awesome/icons/circle";
   // import crosshairs from 'svelte-awesome/icons/crosshairs';
 
-  let data = [],
-    width = 600,
-    height = 400,
-    numPoints = 1;
+  let data = [];
+
+  let width = 600;
+  let height = 400;
+  let numPoints = 1;
 
   let zoomed;
   let bg;
@@ -50,19 +51,12 @@
   });
 
   const myZoomHandler = ({ transform }) => {
-    console.log(`Evo myZoomHandler`);
+    // console.log(`Evo myZoomHandler`);
     zoomed.attr("transform", transform);
-
-    // select("#circle-two").attr("fill", "green").raise();
 
     newScaleX = transform.rescaleX(xScale);
     newScaleY = transform.rescaleY(yScale);
   };
-
-  // const myEndHandler = () => {
-  //   console.log(`END HANDLER`);
-  //   select("svg").selectAll("#target-circle").attr("cursor", "pointer");
-  // };
 
   function initDrag() {
     // console.log(
@@ -111,22 +105,16 @@
 
   function updateData() {
     console.log(`UPDATE DATA`);
-    data = [];
-    for (let idx = 0; idx < numPoints; idx++) {
-      data.push({
-        id: idx,
-        x: 160 - 50 * idx,
+    data = [
+      {
+        x: 160,
         y: 200,
-        fill: idx % 2 === 0 ? "green" : "red",
         heightInit: select("#wq-init-group").node().getBBox().height,
         widthInit: select("#wq-init-group").node().getBBox().width,
         heightTarget: select("#wq-target-group").node().getBBox().height,
         widthTarget: select("#wq-target-group").node().getBBox().width,
-
-        // height: 27.428569793701172,
-        // width: 18.285715103149414
-      });
-    }
+      },
+    ];
   }
 
   // got it myself, but the following is confirmation...
@@ -142,31 +130,27 @@
 
     // console.log(`targetWidth: ${targetWidth} (${typeof targetWidth})`);
 
-    console.log(`0. update: `, data[0].x);
-
     select("svg")
       .select("#wq-target-group")
       .data(data)
       .join("wq-target-group")
       .attr("transform", (d) => `translate(${d.x}, ${d.y})`)
-      .attr("fill", "red")
-      // .style("fill", d => {d.x >= 180 ? 'red' : 'blue'})
-      // .attr("opacity", "0.75")
       .attr("cursor", "grabbing");
 
     // [NB] Need this to syle Svelte Awesome icon(s)
     const myTargetCircle = select("#wq-target-group-circle .fa-icon");
-    // myTargetCircle.style("fill", "red");
 
-    const myTarget = select("#wq-target-group .fa-icon").attr("opacity", "0.75");
+    const myTarget = select("#wq-target-group .fa-icon").attr(
+      "opacity",
+      "0.85"
+    );
     if (data[0].x >= 230 || data[0].x <= 60) {
-      // console.log(`1-A. update: `, data[0].x);
       myTargetCircle.style("fill", "red");
     } else {
-      // console.log(`1-B. update: `, data[0].x);
-      myTargetCircle.style("fill", "green");
+      myTargetCircle.style("fill", "#00cc00");
+      // myTargetCircle.style("fill", "#52bd1a");
+      // myTargetCircle.style("fill", "#339933");
     }
-
 
     select("svg")
       .select("#target-line")
@@ -175,15 +159,10 @@
       .attr("x1", (d) => 150 + d.widthInit / 2)
       .attr("y1", (d) => 120 + d.heightInit)
       .attr("x2", (d) => d.x + d.widthTarget / 2)
-      .attr("y2", (d) => d.y + d.heightTarget + 4); // "+ 4" to tip of target icon
-    // .attr("x2", (d) => d.x + 18.285715103149414 / 2)
-    // .attr("y2", (d) => d.y + 27.428569793701172)
-    // .attr("fill", "red")
-    // .attr("opacity", "0.65");
-    // .attr("cursor", "grabbing");
+      // .attr("y2", (d) => d.y + d.heightTarget + 4); // "scale=4: + 4" to tip of target icon
+      .attr("y2", (d) => d.y + d.heightTarget + 1.55) // "scale=2: + 4" to tip of target icon
+      .attr("opacity", "0.85");
   }
-
-  $: isTargetSafe = false;
 </script>
 
 <h3>
@@ -191,21 +170,22 @@
 </h3>
 <svg id="viz2" width="300" height="300">
   <g class="bg">
-    <rect width="100%" height="100%" fill="#efc" />
-    <!-- This circle can be dragged, but not zoomed or panned -->
-    <!-- <circle id="plain-circle" cx="130" cy="80" r="5" fill="rebeccapurple" /> -->
+    <rect
+      width="100%"
+      height="100%"
+      fill="whitesmoke"
+      style="outline: 1px solid gray"
+    />
+
     <g class="zoomed">
       <!-- In here, this circle can be zoomed, panned, && dragged -->
       <g class="canvas" transform="translate(0, 0)">
         <line
           id="target-line"
-          x1="100"
-          y1="60"
-          x2="200"
-          y2="260"
-          stroke-width="1.5"
-          stroke="#202020"
+          stroke-width="2"
+          stroke="olive"
           stroke-linecap="round"
+          stroke-opacity="0.5"
         />
 
         <!-- <g transform={`translate(${150}, ${120})`}>
@@ -215,32 +195,28 @@
           </g>
         </g> -->
 
-        <!-- <text id="init-wp" x="130" y="80" fill="rebeccapurple">
-          {"\uf3c5"}</text
-        > -->
-
-        <!-- Must have circle here or applied circle from D3 code will not zoom-and-pan -->
-        <!-- <circle id="target-circle" cx="170" cy="100" r="5" fill="red" /> -->
-
-        <!-- <Icon data={mapMarker} scale='3' style='fill: rgb(21, 85, 146);'/> -->
         <g id="wq-init-group" transform={`translate(${150}, ${120})`}>
           <Icon data={mapPin} scale="1" style="fill: rgb(21, 85, 146);" />
         </g>
 
         <g id="wq-target-group" transform={`translate(${100}, ${100})`}>
+          <Icon data={mapMarker} scale="2" />
+          <g
+            id="wq-target-group-circle"
+            transform={`translate(${3.75}, ${4.5})`}
+          >
+            <Icon data={circle} scale="0.8" />
+          </g>
+        </g>
+        <!-- <g id="wq-target-group" transform={`translate(${100}, ${100})`}>
           <Icon data={mapMarker} scale="4" />
           <g
             id="wq-target-group-circle"
             transform={`translate(${7.5}, ${8.5})`}
           >
             <Icon data={circle} scale="1.6" />
-            <!-- <Icon
-              data={circle}
-              scale="1.6"
-              style="fill:{isTargetSafe ? 'green' : 'red'}"
-            /> -->
           </g>
-        </g>
+        </g> -->
       </g>
     </g>
   </g>
@@ -249,5 +225,6 @@
 <style>
   span {
     text-decoration: line-through;
+    color: whitesmoke;
   }
 </style>

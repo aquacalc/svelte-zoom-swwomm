@@ -1,7 +1,7 @@
 <script>
   // *************************** //
   //      Drag, Zoom, & Pan      //
-  //     -- GEOMETRIC ZOOM --    //
+  //      -- SEMANTIC ZOOM --    //
   // *************************** //
 
   import { onMount } from "svelte";
@@ -19,10 +19,6 @@
 
   let data = [];
 
-  let width = 600;
-  let height = 400;
-  let numPoints = 1;
-
   let zoomed;
   let bg;
 
@@ -31,10 +27,6 @@
   let newScaleY;
   // $: newScaleX = zoomIdentity;
   // $: newScaleY = zoomIdentity;
-
-  // target Icon's <g> dimensions
-  let targetWidth;
-  let targetHeight;
 
   // Add X axis
   $: xScale = scaleLinear().domain([0, 8]).range([0, 300]);
@@ -115,15 +107,15 @@
   function updateData() {
     console.log(`UPDATE DATA`);
 
+    // // see: https://stackoverflow.com/questions/21990857/d3-js-how-to-get-the-computed-width-and-height-for-an-arbitrary-element
     let heightInit = select("#wq-init-group").node().getBBox().height;
     let widthInit = select("#wq-init-group").node().getBBox().width;
 
+    // Waypoint data
     data = [
       {
         x: newScaleX ? newScaleX(3) : xScale(3),
         y: newScaleY ? newScaleY(4) : yScale(4),
-        // heightInit: newScaleX ? newScaleX(heightInit) : xScale(heightInit),
-        // widthInit: newScaleY ? newScaleY(widthInit) : yScale(widthInit),
         heightInit,
         widthInit,
         heightTarget: select("#wq-target-group").node().getBBox().height,
@@ -134,17 +126,7 @@
 
   // got it myself, but the following is confirmation...
   // see: https://stackoverflow.com/questions/47816033/how-can-i-drag-group-g-element-in-d3-js
-
   function update() {
-    // // see: https://stackoverflow.com/questions/21990857/d3-js-how-to-get-the-computed-width-and-height-for-an-arbitrary-element
-    // console.log(`In initDrag: `, select("#wq-target-group").node().getBBox());
-
-    let targetGsDimensions = select("#wq-target-group").node().getBBox();
-    targetWidth = targetGsDimensions.width;
-    targetHeight = targetGsDimensions.Height;
-
-    // console.log(`targetWidth: ${targetWidth} (${typeof targetWidth})`);
-
     select("svg")
       .select("#wq-target-group")
       .data(data)
@@ -165,12 +147,11 @@
       "opacity",
       "0.85"
     );
+    
     if (data[0].x >= 230 || data[0].x <= 60) {
       myTargetCircle.style("fill", "red");
     } else {
       myTargetCircle.style("fill", "#00cc00");
-      // myTargetCircle.style("fill", "#52bd1a");
-      // myTargetCircle.style("fill", "#339933");
     }
 
     select("svg")
@@ -180,7 +161,6 @@
       .attr("x1", (d) => 150 + d.widthInit / 2)
       .attr("y1", (d) => 120 + d.heightInit)
       .attr("x2", (d) => d.x + d.widthTarget / 2)
-      // .attr("y2", (d) => d.y + d.heightTarget + 4); // "scale=4: + 4" to tip of target icon
       .attr("y2", (d) => d.y + d.heightTarget + 1.55) // "scale=2: + 4" to tip of target icon
       .attr("opacity", "0.85");
   }
@@ -237,24 +217,13 @@
             <Icon data={circle} scale="0.8" />
           </g>
         </g>
-
-        <!-- <g id="wq-target-group" transform={`translate(${100}, ${100})`}>
-          <Icon data={mapMarker} scale="4" />
-          <g
-            id="wq-target-group-circle"
-            transform={`translate(${7.5}, ${8.5})`}
-          >
-            <Icon data={circle} scale="1.6" />
-          </g>
-        </g> -->
       </g>
     </g>
   </g>
 </svg>
 
 <style>
-  span {
+  /* span {
     text-decoration: line-through;
-    /* color: whitesmoke; */
-  }
+  } */
 </style>
